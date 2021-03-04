@@ -1,0 +1,38 @@
+{
+    "name": "frankbv/phpstan-enum",
+    "description": "A PHPStan extension for frankbv/enum",
+    "authors": [
+        {
+            "name": "Frank",
+            "homepage": "https://www.frank.shop/"
+        }
+    ],
+    "license": "MIT",
+    "type": "phpstan-extension",
+    "autoload": {
+        "psr-4": {
+            "Frank\\PhpStan\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Frank\\Test\\PhpStan\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.4|^8.0",
+        "frankbv/enum": "^2.0",
+        "phpstan/phpstan": "^0.12.78",
+        "symfony/polyfill-php80": "^1.22"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        }
+    }
+}
