@@ -4,19 +4,19 @@ namespace Frank\Test\PhpStan\Reflection;
 use Frank\PhpStan\Reflection\EnumMethodReflection;
 use Frank\PhpStan\Reflection\EnumMethodsClassReflectionExtension;
 use Frank\PhpStan\Reflection\PublicEnumConstantNotFoundException;
-use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\Testing\TestCase;
+use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\Type\VerbosityLevel;
 
-class EnumReflectionTest extends TestCase
+class EnumReflectionTest extends PHPStanTestCase
 {
-    private Broker $broker;
+    private ReflectionProvider $reflectionProvider;
     private EnumMethodsClassReflectionExtension $reflectionExtension;
 
     public function setUp(): void
     {
-        $this->broker = $this->createBroker();
+        $this->reflectionProvider = $this->createReflectionProvider();
         $this->reflectionExtension = new EnumMethodsClassReflectionExtension();
     }
 
@@ -25,7 +25,7 @@ class EnumReflectionTest extends TestCase
      */
     public function testExistingEnumMethods(string $methodName): void
     {
-        $classReflection = $this->broker->getClass(TestEnum::class);
+        $classReflection = $this->reflectionProvider->getClass(TestEnum::class);
         $this->assertTrue($this->reflectionExtension->hasMethod($classReflection, $methodName));
     }
 
@@ -43,17 +43,17 @@ class EnumReflectionTest extends TestCase
 
     public function testNonExistingEnumMethod(): void
     {
-        $classReflection = $this->broker->getClass(TestEnum::class);
+        $classReflection = $this->reflectionProvider->getClass(TestEnum::class);
         $this->assertFalse($this->reflectionExtension->hasMethod($classReflection, 'DO_NOT_EXIST'));
     }
 
     public function testGetEnumMethodReflectionOfPublicConst(): void
     {
-        $classReflection = $this->broker->getClass(TestEnum::class);
+        $classReflection = $this->reflectionProvider->getClass(TestEnum::class);
 
         $this->assertInstanceOf(
             EnumMethodReflection::class,
-            $methodReflection = $this->reflectionExtension->getMethod($classReflection, 'PUBLIC_CONST')
+            $this->reflectionExtension->getMethod($classReflection, 'PUBLIC_CONST')
         );
     }
 
@@ -64,7 +64,7 @@ class EnumReflectionTest extends TestCase
     {
         $this->expectException(PublicEnumConstantNotFoundException::class);
 
-        $classReflection = $this->broker->getClass(TestEnum::class);
+        $classReflection = $this->reflectionProvider->getClass(TestEnum::class);
 
         $this->assertInstanceOf(
             EnumMethodReflection::class,
@@ -85,7 +85,7 @@ class EnumReflectionTest extends TestCase
 
     public function testEnumMethodProperties(): void
     {
-        $classReflection = $this->broker->getClass(TestEnum::class);
+        $classReflection = $this->reflectionProvider->getClass(TestEnum::class);
         $methodReflection = $this->reflectionExtension->getMethod($classReflection, 'PUBLIC_CONST');
         $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
